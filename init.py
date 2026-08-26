@@ -5,7 +5,7 @@ class MyBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    async def on_ready(self):
+    async def on_ready(self): 
         print(f"We are ready to go in, {self.user.name}")
 
     async def on_message(self, message):
@@ -19,3 +19,4 @@ class MyBot(commands.Bot):
             print(f"Message from {message.author}: {message.content}")
 
         await self.process_commands(message)
+
