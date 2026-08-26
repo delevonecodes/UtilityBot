@@ -26,15 +26,16 @@ class Pomodoro():
         return f"Pomodoro for {self.user_id} - {'Completed' if self.is_completed else 'In Progress'}"
 
 class Assignment():
-    def __init__(self, user_id, title, description, due_date):
+    pass
+
+class User():
+    def __init__(self, user_id):
         self.user_id = user_id
-        self.title = title
-        self.description = description
-        self.due_date = due_date
-        self.is_completed = False
+        self.pomodoros = []
+        self.assignments = []
 
-    def mark_completed(self):
-        self.is_completed = True
+    def add_pomodoro(self, pomodoro):
+        self.pomodoros.append(pomodoro)
 
-    def __str__(self):
-        return f"Assignment: {self.title} for {self.user_id} - {'Completed' if self.is_completed else 'Pending'}"
+    def add_assignment(self, assignment):
+        self.assignments.append(assignment)
