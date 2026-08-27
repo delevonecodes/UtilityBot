@@ -28,13 +28,13 @@ class Fun(commands.Cog):
 
     @app_commands.command(name="parrot", description="Parrot back what you say")
     async def parrot(self, interaction: discord.Interaction, *, message: str):
-        await interaction.message.reply(f"{interaction.user} said '{message}'")
+        await interaction.response.send_message(f"Squack! '{message}' Squack!")
 
     @app_commands.command(name="whisper", description="Whisper a message to a user")
     async def whisper(self, interaction: discord.Interaction, user: discord.User, *, message: str):
         print(f"{interaction.user} whispered to {user}: {message}")
         await user.send(f"'{interaction.user}' whispered to you: '{message}'")
-        await interaction.delete_original_response() #deletes original message so only the user sees it and its super secret
+        #await interaction.delete_original_response() #deletes original message so only the user sees it and its super secret
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Fun(bot))
