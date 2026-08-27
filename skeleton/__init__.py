@@ -1,22 +1,20 @@
 import discord
 from discord.ext import commands
+import os
 
 class CustomBot(commands.Bot):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, banned_words=[...], *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.banned_words = banned_words
 
-    async def on_ready(self): 
+    async def setup_hook(self):
+        cogs_path = os.path.join(os.path.dirname(__file__), "cogs")
+        for filename in os.listdir(cogs_path):
+            if filename.endswith(".py") and not filename.startswith("_"):
+                await self.load_extension(f"skeleton.cogs.{filename[:-3]}")
+
+        await self.tree.sync()
+
+    async def on_ready(self):
         print(f"We are ready to go in, {self.user.name}")
-
-    async def on_message(self, message):
-        if message.author == self.user:
-            return
-
-        if "shit" in message.content.lower():
-            await message.delete()
-            await message.channel.send(f"{message.author.mention} - That word is prohibited!")
-        else:
-            print(f"Message from {message.author}: {message.content}")
-
-        await self.process_commands(message)
 
