@@ -26,7 +26,7 @@ class Fun(commands.Cog):
         random_joke = choice(list(jokes.keys()))
         await interaction.response.send_message(f"{random_joke} {jokes[random_joke]}")
 
-    @app_commands.command(name="parrot", description="Parrot back what you say")
+    @app_commands.command(name="parrot", description="echo back what you say")
     async def parrot(self, interaction: discord.Interaction, *, message: str):
         await interaction.response.send_message(f"Squack! '{message}' Squack!")
 
@@ -34,7 +34,15 @@ class Fun(commands.Cog):
     async def whisper(self, interaction: discord.Interaction, user: discord.User, *, message: str):
         print(f"{interaction.user} whispered to {user}: {message}")
         await user.send(f"'{interaction.user}' whispered to you: '{message}'")
-        #await interaction.delete_original_response() #deletes original message so only the user sees it and its super secret
+
+    @app_commands.command(name="shout", description="Shout a message to a user")
+    async def shout(self, interaction: discord.Interaction, user: discord.User, *, message: str):
+        print(f"Shout command called with message '{message}' by {interaction.user} to {user}")
+
+    @app_commands.command(name="coin", description="Flip a coin")
+    async def coin(self, interaction: discord.Interaction):
+        result = choice(["Heads", "Tails"])
+        await interaction.response.send_message(f"{result}!")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Fun(bot))
