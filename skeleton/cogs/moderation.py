@@ -11,10 +11,5 @@ class Moderation(commands.Cog):
         await member.kick()
         await interaction.response.send_message(f"Kicked {member}")
 
-    """@app_commands.command(name="ban", description="Ban a member")
-    async def ban(self, interaction: discord.Interaction, member: discord.Member):
-        await member.ban()
-        await interaction.response.send_message(f"Banned {member}")
-    """
 async def setup(bot: commands.Bot):
     await bot.add_cog(Moderation(bot))
