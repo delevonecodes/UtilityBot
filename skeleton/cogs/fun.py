@@ -18,6 +18,10 @@ jokes = {
     "Why did the coffee file a police report?": "Because it got mugged!",
 }
 
+body_parts = {
+
+}
+
 word_list = list(get_english_words_set(['web2'], lower=True))
 hangman_words = [word for word in word_list if len(word) == 6 and word.isalpha()]
 
@@ -55,7 +59,7 @@ class Fun(commands.Cog):
         guessed_letters = set()
         print(f"Hangman game started with word: '{word}' for user: {interaction.user}")
         await interaction.response.send_message(f"Let's play Hangman! The word has {len(word)} letters. Type a letter to guess. You have {len(word)} incorrect guesses allowed. Start guessing! Type 'quit' to end the game.\n\_\_\_\_\_\_")
-        guesses_remaining = len(word)
+        guesses_remaining = 10
         running_len = 0
         while True:
             def check(m):
