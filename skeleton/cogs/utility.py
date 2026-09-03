@@ -1,3 +1,5 @@
+from time import time
+from asyncio import sleep
 from discord.ext import commands
 from discord import app_commands
 import discord
@@ -25,7 +27,6 @@ class Utility(commands.Cog):
     @app_commands.command(name="link", description="Link your Discord account to Stracker")
     async def link(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
-
         try:
             async with self.session.post(
                 f"{self.api_base}/link/start",
@@ -59,7 +60,29 @@ class Utility(commands.Cog):
             f"### `{data['code']}`",
             ephemeral=True
         )
- 
+        for _ in range(200):  # Check for 10 minutes (120 * 5 seconds)
+            await sleep(3)  # Wait for 5 seconds before checking again
+            try:
+                async with self.session.get(
+                    f"{self.api_base}/link/status",
+                    headers=self.headers,
+                    params={"discord_id": str(interaction.user.id)}
+                ) as resp:
+                    if resp.status != 200:
+                        continue
+                    data = await resp.json()
+            except Exception as e:
+                    await interaction.followup.send(
+                        "Couldn't reach Stracker right now. Try again in a moment.", ephemeral=True
+                    )
+                    print(f"Error checking link status: {e}")
+                    return
+            if data.get('linked'):
+                await interaction.followup.send(f"Your Discord account has been successfully linked to Stracker user **{data.get('username')}**!", ephemeral=True)
+                return
+        await interaction.followup.send("Your Discord account was not linked within the time limit. Please try again.", ephemeral=True)
+        
+
     @app_commands.command(name="unlink", description="Unlink your Discord account from Stracker")
     async def unlink(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
@@ -90,6 +113,36 @@ class Utility(commands.Cog):
         await interaction.followup.send(
             "Your Discord account has been unlinked from Stracker.", ephemeral=True
         )
+
+        @app_commands.command(name="add-assignment", description="Add an assignment to Stracker")
+        async def add_assignment(self, interaction: discord.Interaction, assignment_name: str, due_date: str):
+            """await interaction.response.defer(ephemeral=True)
+            try:
+                async with self.session.post(
+                    f"{self.api_base}/assignments",
+                    headers=self.headers,
+                    json={
+                        "discord_id": str(interaction.user.id),
+                        "assignment_name": assignment_name,
+                        "due_date": due_date
+                    }
+                ) as resp:
+                    status = resp.status
+            except Exception:
+                await interaction.followup.send(
+                    "Couldn't reach Stracker right now. Try again in a moment.", ephemeral=True
+                )
+                return
+
+            if status != 200:
+                await interaction.followup.send(
+                    "Couldn't add the assignment to Stracker. Try again in a moment.", ephemeral=True
+                )
+                return
+
+            await interaction.followup.send(
+                f"Assignment '{assignment_name}' has been added to Stracker with due date {due_date}.", ephemeral=True
+            )"""
  
 async def setup(bot: commands.Bot):
     await bot.add_cog(Utility(bot))
