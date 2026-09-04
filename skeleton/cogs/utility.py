@@ -56,10 +56,15 @@ class Utility(commands.Cog):
                 "Couldn't reach Stracker right now. Try again in a moment.", ephemeral=True
             )
             return
- 
+        link_embed = discord.Embed(
+            title="Link Your Discord Account to Stracker",
+            description=(
+                f"Open **'http://127.0.0.1:5000/link-discord'**, and enter this code within 10 minutes:\n"
+                f"### `**{data['code']}**`"
+            )
+        )
         await interaction.followup.send(
-            f"Open **'http://127.0.0.1:5000/link-discord'**, and enter this code within 10 minutes:\n"
-            f"### `{data['code']}`",
+            embed=link_embed,
             ephemeral=True
         )
         for _ in range(200):
@@ -119,7 +124,7 @@ class Utility(commands.Cog):
     @app_commands.describe(
         course="Course name",
         assignment_name="Assignment name",
-        due_date="Due date, format MM/DD/YYYY",
+        due_date="Due date, format MM/DD/YYYY or 'today'",
         priority="How urgent this assignment is",
         description="Optional notes"
     )
@@ -130,13 +135,15 @@ class Utility(commands.Cog):
     ])
     async def add_assignment(self, interaction: discord.Interaction, course: str, assignment_name: str, due_date: str, priority: app_commands.Choice[str], *, description: str = None):
         await interaction.response.defer(ephemeral=True)
-        try:
-            due_date_obj = datetime.datetime.strptime(due_date, "%m/%d/%Y").date()
-        except ValueError:
-            await interaction.followup.send(
-                "Invalid due date format. Please use MM/DD/YYYY.", ephemeral=True
-            )
-            return
+
+        if due_date.lower() == "today":
+            due_date_obj = datetime.date.today()
+        else:
+            try:
+                due_date_obj = datetime.datetime.strptime(due_date, "%m/%d/%Y").date()
+            except ValueError:
+                await interaction.followup.send("Invalid due date format. Please use MM/DD/YYYY or 'today'.", ephemeral=True)
+                return
 
         try:
             async with self.session.post(
@@ -174,11 +181,11 @@ class Utility(commands.Cog):
                 ephemeral=True
             )
             return
-
-        await interaction.followup.send(
-            f"Added new assignment to Stracker:\nAssignment: **{data['name']}**\n Course: {data['course']}\nDue: {due_date_obj.strftime('%m/%d/%Y')} — Priority: {data['priority']}",
-            ephemeral=True
+        embed = discord.Embed(
+            title="New Assignment Added",
+            description=f"**Assignment**: {data['name']}\n**Course**: {data['course']}\n**Due**: {due_date_obj.strftime('%m/%d/%Y')}\n**Priority**: {data['priority']}"
         )
+        await interaction.followup.send(embed=embed,ephemeral=True)
 
     @app_commands.command(name="pomodoro", description="Start a Pomodoro timer and be timed out while you study")
     @app_commands.describe(duration="Pomodoro duration in minutes")
