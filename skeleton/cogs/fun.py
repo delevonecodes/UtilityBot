@@ -23,7 +23,7 @@ body_parts = {
 }
 
 word_list = list(get_english_words_set(['web2'], lower=True))
-hangman_words = [word for word in word_list if len(word) == 6 and word.isalpha()]
+hangman_words = [word for word in word_list if 5 <= len(word) <= 8 and word.isalpha()]
 
 class Fun(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -58,7 +58,7 @@ class Fun(commands.Cog):
         word = choice(hangman_words)
         guessed_letters = set()
         print(f"Hangman game started with word: '{word}' for user: {interaction.user}")
-        await interaction.response.send_message(f"Let's play Hangman! The word has {len(word)} letters. Type a letter to guess. You have {len(word)} incorrect guesses allowed. Start guessing! Type 'quit' to end the game.\n\_\_\_\_\_\_")
+        await interaction.response.send_message(f"**Let's play Hangman! The word has {len(word)} letters. Type a letter to guess. You have 10 incorrect guesses allowed. Start guessing! Type 'quit' to end the game.\n{'\_'*len(word)}**")
         guesses_remaining = 10
         running_len = 0
         while True:
@@ -68,33 +68,33 @@ class Fun(commands.Cog):
             try:
                 guess_message = await self.bot.wait_for('message', check=check, timeout=60.0)
             except TimeoutError:
-                await interaction.channel.send(f"Time's up {interaction.user.mention}! The word was '{word}'.")
+                await interaction.channel.send(f"Time's up {interaction.user.mention}! The word was '**{word}**'.")
                 break
 
             guess = guess_message.content.lower()
             if guess == "quit":
-                await interaction.channel.send(f"Game ended by {interaction.user.mention}. The word was '{word}'.")
+                await interaction.channel.send(f"Game ended by {interaction.user.mention}. The word was '**{word}**'.")
                 break
             elif guess == word:
-                await interaction.channel.send(f"Congratulations {interaction.user.mention}! You've guessed the word '{word}'!")
+                await interaction.channel.send(f"Congratulations {interaction.user.mention}! You've guessed the word '**{word}**'🎉!")
                 break
             elif guess in guessed_letters:
-                await interaction.channel.send(f"You already guessed '{guess}'. Try again.")
+                await interaction.channel.send(f"You already guessed '**{guess}**'. Try again.")
                 continue
 
             guessed_letters.update(guess)
 
             if guess in word:
-                await interaction.channel.send(f"Good guess! '{guess}' is in the word.")
+                await interaction.channel.send(f"Good guess! '**{guess}**' is in the word.")
                 running_len += len(guess)
                 if running_len >= len(word):
-                    await interaction.channel.send(f"Congratulations {interaction.user.mention}! You've guessed the word '{word}'!")
+                    await interaction.channel.send(f"Congratulations {interaction.user.mention}! You've guessed the word '**{word}**'🎉!")
                     break
             else:
-                await interaction.channel.send(f"Sorry, '{guess}' is not in the word.")
+                await interaction.channel.send(f"Sorry, '**{guess}**' is not in the word.")
                 guesses_remaining -= 1
                 if guesses_remaining <= 0:
-                    await interaction.channel.send(f"Game over {interaction.user.mention}! You've run out of guesses. The word was '{word}'.")
+                    await interaction.channel.send(f"Game over {interaction.user.mention}! You've run out of guesses. The word was '**{word}**'.")
                     break
                 else:
                     await interaction.channel.send(f"You have {guesses_remaining} incorrect guesses remaining.")
@@ -103,7 +103,7 @@ class Fun(commands.Cog):
             await interaction.channel.send(f"Incorrect letters guessed: {', '.join(sorted(guessed_letters - set(word)))}\n{display_word}")
 
             if all(letter in guessed_letters for letter in word):
-                await interaction.channel.send(f"Congratulations {interaction.user.mention}! You've guessed the word '{word}'!")
+                await interaction.channel.send(f"Congratulations {interaction.user.mention}! You've guessed the word '**{word}**'🎉!")
                 break
                         
 async def setup(bot: commands.Bot):

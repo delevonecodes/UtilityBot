@@ -12,7 +12,9 @@ class CustomBot(commands.Bot):
         for filename in os.listdir(cogs_path):
             if filename.endswith(".py") and not filename.startswith("_"):
                 await self.load_extension(f"skeleton.cogs.{filename[:-3]}")
-        await self.tree.sync(guild=discord.Object(id=1532642357562970262))  # Replace with your guild ID
+        guild = discord.Object(id=int(os.getenv("GUILD_ID")))
+        self.tree.copy_global_to(guild=guild)
+        await self.tree.sync(guild=guild)
 
     async def on_ready(self):
         print(f"We are ready to go in, {self.user.name}")
