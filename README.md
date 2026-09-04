@@ -26,6 +26,7 @@ The bot uses Discord slash commands and communicates with Stracker through an au
 * Random jokes
 * Coin flips
 * Hangman
+* 8-Ball
 * Parrot/echo command
 * Private whisper command
 
