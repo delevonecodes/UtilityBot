@@ -60,7 +60,7 @@ class Utility(commands.Cog):
             title="Link Your Discord Account to Stracker",
             description=(
                 f"Open **'http://127.0.0.1:5000/link-discord'**, and enter this code within 10 minutes:\n"
-                f"### `**{data['code']}**`"
+                f"### `{data['code']}`"
             )
         )
         await interaction.followup.send(

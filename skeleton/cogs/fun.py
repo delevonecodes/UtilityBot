@@ -152,8 +152,7 @@ class Fun(commands.Cog):
                 f"Type a single letter to guess, or the whole word "
                 f"if you're confident. "
                 f"You have {MAX_WRONG_GUESSES} incorrect guesses allowed. "
-                f"Type 'quit' to end the game.\n"
-                f"{'\_ ' * len(word)}"
+                f"Type 'quit' to end the game.\n", 
             )
 
             def check(message):
