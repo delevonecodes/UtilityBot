@@ -1,24 +1,23 @@
 # Stracker Discord Bot
 
-A Python Discord bot that combines productivity tools, moderation, games, and direct integration with **[Stracker](https://stracker-oxu6.onrender.com/)**, a full-stack assignment management web application.
+A Python Discord bot that combines productivity tools, moderation, games, and integration with **[Stracker](https://stracker-oxu6.onrender.com/)**, my assignment management web application.
 
-The bot uses Discord slash commands and communicates with Stracker through an authenticated HTTP API, allowing users to manage assignments from Discord while keeping their data connected to the web application.
+The bot uses Discord slash commands and communicates with Stracker through an API, allowing users to manage assignments and connect their Discord account to their Stracker account.
 
 ## Features
 
 ### Stracker Integration
 
-* Link a Discord account to a Stracker account using a temporary verification code
-* Check the currently authenticated Discord user
+* Link a Discord account to a Stracker account
+* Check the currently linked Stracker account
 * Unlink a Discord account from Stracker
-* Create Stracker assignments directly from Discord
-* Communicate with Stracker through authenticated REST API requests
-* Associate Discord users with their Stracker accounts
+* Add assignments to Stracker directly from Discord
+* Send authenticated requests to the Stracker API
 
 ### Productivity
 
-* Start a configurable Pomodoro study timer
-* Temporarily timeout the user for the selected study duration
+* Start a Pomodoro study timer
+* Temporarily timeout the user while the timer is active
 * Automatically remove the timeout when the timer finishes
 
 ### Fun & Games
@@ -36,25 +35,25 @@ The bot uses Discord slash commands and communicates with Stracker through an au
 
 ## Commands
 
-| Command           | Description                                              |
-| ----------------- | -------------------------------------------------------- |
-| `/link`           | Generate a temporary code to connect Discord to Stracker |
-| `/unlink`         | Disconnect the Discord account from Stracker             |
-| `/whoami`         | Display the current Discord user                         |
-| `/stracker`       | Send the Stracker web application link                   |
-| `/add-assignment` | Add an assignment to Stracker from Discord               |
-| `/pomodoro`       | Start a Pomodoro study timer                             |
-| `/kick`           | Kick a server member                                     |
-| `/joke`           | Tell a random joke                                       |
-| `/coin`           | Flip a coin                                              |
-| `/hangman`        | Start a Hangman game                                     |
-| `/parrot`         | Echo a message                                           |
-| `/8-ball`         | Receive a magic 8-ball response                          |
-| `/whisper`        | Send a private message to another Discord user           |
+| Command           | Description                                    |
+| ----------------- | ---------------------------------------------- |
+| `/link`           | Generate a code to connect Discord to Stracker |
+| `/unlink`         | Disconnect the Discord account from Stracker   |
+| `/whoami`         | Display the current Discord user               |
+| `/stracker`       | Send the Stracker web application link         |
+| `/add-assignment` | Add an assignment to Stracker                  |
+| `/pomodoro`       | Start a Pomodoro study timer                   |
+| `/kick`           | Kick a server member                           |
+| `/joke`           | Tell a random joke                             |
+| `/coin`           | Flip a coin                                    |
+| `/hangman`        | Start a Hangman game                           |
+| `/parrot`         | Echo a message                                 |
+| `/8-ball`         | Get a random 8-Ball response                   |
+| `/whisper`        | Send a private message to another Discord user |
 
 ## Architecture
 
-The bot is organized using Discord.py cogs, separating commands by responsibility.
+The bot is organized using Discord.py cogs to separate commands by functionality.
 
 ```text
 Discord Bot/
@@ -69,59 +68,31 @@ Discord Bot/
         └── utility.py
 ```
 
-### System Architecture
+### Stracker Integration
 
 ```text
 Discord User
-      │
-      ▼
+      |
+      v
 Discord Slash Command
-      │
-      ▼
-   discord.py
-      │
-      │ Authenticated HTTP Request
-      ▼
-  Stracker REST API
-      │
-      ▼
-Stracker Backend
-      │
-      ▼
- Database
+      |
+      v
+   Discord Bot
+      |
+      | HTTP Request
+      v
+ Stracker API
+      |
+      v
+Stracker Application
 ```
 
-### Account Linking Flow
-
-```text
-Discord User
-      │
-      │ /link
-      ▼
-Discord Bot
-      │
-      │ Request verification code
-      ▼
-Stracker API
-      │
-      │ Temporary Code
-      ▼
-Discord User
-      │
-      │ Enter code in Stracker
-      ▼
-Stracker
-      │
-      │ Link Discord ID
-      ▼
-Discord Bot
-```
+The bot sends requests to Stracker when a user uses commands such as `/link`, `/unlink`, and `/add-assignment`.
 
 ## Technologies
 
 * **Python**
 * **discord.py**
-* **Discord Slash Commands / Application Commands**
 * **aiohttp**
 * **asyncio**
 * **python-dotenv**
@@ -130,7 +101,7 @@ Discord Bot
 
 ## Environment Variables
 
-Create a `.env` file containing the required environment variables:
+Create a `.env` file containing:
 
 ```env
 DISCORD_TOKEN=your_discord_bot_token
@@ -139,7 +110,7 @@ STRACKER_API_BASE=https://your-stracker-domain/api
 BOT_API_KEY=your_shared_api_key
 ```
 
-Never commit `.env` or expose your Discord bot token or API keys publicly.
+Never commit your `.env` file or expose your Discord token or API keys.
 
 ## Installation
 
@@ -166,7 +137,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-Install dependencies:
+Install the required packages:
 
 ```bash
 pip install -r requirements.txt
@@ -182,9 +153,9 @@ python main.py
 
 ## Stracker API Integration
 
-The Discord bot communicates with Stracker through authenticated API endpoints.
+The bot communicates with Stracker through authenticated API requests.
 
-Current functionality includes:
+The current integration includes:
 
 ```text
 POST /link/start
@@ -193,49 +164,17 @@ POST /unlink
 POST /add-assignment
 ```
 
-API requests are authenticated using an API key.
-
 ### Adding an Assignment
 
-A user can run:
+After linking a Discord account, a user can run:
 
 ```text
 /add-assignment
 ```
 
-The bot sends an authenticated API request to Stracker containing the assignment information.
+The bot sends the assignment information to Stracker through the API, where it is added to the user's account.
 
-Stracker then creates the assignment in the user's account.
-
-This allows users to manage their assignments without leaving Discord.
-
-## Deployment
-
-The bot requires a persistent Python environment with access to:
-
-* `DISCORD_TOKEN`
-* `GUILD_ID`
-* `STRACKER_API_BASE`
-* `BOT_API_KEY`
-
-Environment variables should be configured through the hosting provider rather than committed to the repository.
-
-Before deployment, verify that:
-
-1. The Stracker API is publicly accessible.
-2. `STRACKER_API_BASE` points to the production Stracker API.
-3. All Discord bot permissions are configured correctly.
-4. Secrets are stored securely as environment variables.
-
-## Security
-
-The project uses several security practices:
-
-* Environment variables for secrets
-* `.gitignore` protection for `.env`
-* API-key authentication between the bot and Stracker
-* Temporary account-linking codes
-* Ephemeral Discord responses for sensitive account actions where appropriate
+This allows assignments to be added without leaving Discord.
 
 ## Project Structure
 
@@ -243,30 +182,31 @@ The project uses several security practices:
 
 Responsible for:
 
-* Starting the Discord client
+* Starting the Discord bot
 * Loading cogs
-* Registering slash commands
 * Connecting to Discord
+* Registering slash commands
 
 ### `cogs/fun.py`
 
-Contains entertainment-related commands such as:
+Contains commands such as:
 
 * `/joke`
 * `/coin`
 * `/hangman`
 * `/parrot`
 * `/whisper`
+* `/8-ball`
 
 ### `cogs/moderation.py`
 
-Contains moderation functionality such as:
+Contains moderation commands such as:
 
 * `/kick`
 
 ### `cogs/utility.py`
 
-Contains productivity and Stracker integration functionality such as:
+Contains productivity and Stracker-related commands such as:
 
 * `/link`
 * `/unlink`
@@ -277,48 +217,46 @@ Contains productivity and Stracker integration functionality such as:
 
 ## What I Learned
 
-Building this project provided hands-on experience with:
+Building this project gave me experience with:
 
-* Asynchronous Python programming
-* Discord application commands
+* Asynchronous Python
+* Discord slash commands
 * REST API integration
-* HTTP requests with `aiohttp`
-* Authentication between services
-* Temporary account-linking systems
-* Modular application architecture
-* Discord permissions and member management
-* Environment-variable based configuration
-* Connecting multiple independent applications
-* Error handling for external APIs
+* HTTP requests using `aiohttp`
+* Connecting two separate applications
+* API authentication
+* Account linking
+* Modular code organization
+* Discord permissions
+* Environment variables
+* Handling API errors and user input
 
 ## Future Improvements
 
-* Add `/assignments` to view upcoming Stracker assignments
-* Add `/complete` and `/delete-assignment` commands
-* Add deadline reminders through Discord
-* Add assignment statistics and productivity analytics
-* Add automated unit and integration tests
-* Add centralized logging
-* Add stronger moderation permission checks
-* Add GitHub Actions for testing and CI/CD
-* Improve Discord embeds, buttons, and command UX
-* Replace account-linking polling with a more event-driven system
+* Add a command to view upcoming assignments
+* Add commands to complete and delete assignments
+* Add assignment deadline reminders
+* Add more moderation commands
+* Add automated tests
+* Add better logging
+* Improve Discord embeds and command responses
+* Add GitHub Actions for testing
 
 ## Demo
 
 Coming soon.
 
-A future demo will show:
+The demo will show the bot being used to:
 
-1. Linking a Discord account to Stracker
-2. Creating an assignment through Discord
-3. Viewing the assignment in Stracker
-4. Starting a Pomodoro timer
-5. Receiving productivity/deadline reminders
+1. Link a Discord account to Stracker
+2. Add an assignment through Discord
+3. View the assignment in Stracker
+4. Start a Pomodoro timer
+5. Use the bot's other commands
 
 ## Related Project
 
-**Stracker — Full-Stack Assignment Management Platform**
+**Stracker — Assignment Management Web Application**
 
 [View Stracker on GitHub](https://github.com/delevonecodes/assignment_tracker2)
 

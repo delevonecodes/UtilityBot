@@ -64,22 +64,6 @@ class Fun(commands.Cog):
             ephemeral=True
         )
 
-    @app_commands.command(
-        name="shout",
-        description="Shout a message to a user"
-    )
-    async def shout(
-        self,
-        interaction: discord.Interaction,
-        user: discord.User,
-        *,
-        message: str
-    ):
-        print(
-            f"Shout command called with message "
-            f"'{message}' by {interaction.user} to {user}"
-        )
-
     @app_commands.command(name="coin", description="Flip a coin")
     async def coin(self, interaction: discord.Interaction):
         result = choice(["Heads", "Tails"])
