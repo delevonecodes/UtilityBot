@@ -3,3 +3,4 @@ discord.log
 .idea/
 .env
 __pycache__/**/*
+*.db
